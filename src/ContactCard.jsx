@@ -211,6 +211,21 @@ const ContactCard = ({ className = "" }) => {
               </a>
             </div>
           </div>
+
+          <div className="contact-item">
+            <div className="contact-icon zalo">🇻🇳</div>
+            <div className="contact-info">
+              <div className="contact-label">Zalo Group</div>
+              <a 
+                href="https://zalo.me/g/ywjwyv205" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="contact-link"
+              >
+                Join our Zalo Group
+              </a>
+            </div>
+          </div>
         </div>
 
         <div className="contact-footer">
