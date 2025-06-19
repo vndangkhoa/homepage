@@ -310,6 +310,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Previous Versions
 - **v1.0.0**: Initial release with basic profile and contact cards
 
+## 📝 Recent Changes
+
+- All backgrounds set to solid black and all text set to white for maximum contrast and clarity.
+- Removed all gradients, glassmorphism, and blend modes that could obscure text or images.
+- Fixed ProfileCard and CardCarousel to ensure all text is white and spacing is consistent.
+- Fixed profile photo path using `${import.meta.env.BASE_URL}KhoaVo-profile.png` for compatibility with GitHub Pages and Netlify.
+- Cleaned up the repository and performed a fresh install, build, and deployment to both GitHub Pages and Netlify.
+- Updated deployment instructions and scripts for reliable one-command deploys.
+- Verified that the profile photo and all assets display correctly on both local and production environments.
+
 # Khoa Vo Profile
 
 A modern, visually rich, interactive personal profile site built with **Vite + React**.
