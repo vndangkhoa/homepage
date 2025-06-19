@@ -309,3 +309,67 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Previous Versions
 - **v1.0.0**: Initial release with basic profile and contact cards
+
+# Khoa Vo Profile
+
+A modern, visually rich, interactive personal profile site built with **Vite + React**.
+
+## Features
+- **Dark, glassmorphic theme** with animated backgrounds and 3D tilt effects
+- **ProfileCard** and **ContactCard** with bento grid layout and glowing effects
+- **CardCarousel** for smooth, swipeable card switching (mobile and desktop)
+- **Responsive** and mobile-first design
+- **No theme switching** (static dark mode for best visual impact)
+
+## Getting Started
+
+### 1. Install dependencies
+```sh
+cd profile
+npm install
+```
+
+### 2. Run locally
+```sh
+npm run dev
+```
+Open the local address (e.g. http://localhost:5173/) in your browser.
+
+## Deployment
+
+### Deploy to GitHub Pages
+
+1. **Push your code to a GitHub repository.**
+2. **Add the following to your `vite.config.js`:**
+   ```js
+   import { defineConfig } from 'vite';
+   import react from '@vitejs/plugin-react';
+
+   export default defineConfig({
+     plugins: [react()],
+     base: '/YOUR_REPO_NAME/', // <-- Set this to your repo name
+   });
+   ```
+3. **Install the deploy tool:**
+   ```sh
+   npm install --save-dev gh-pages
+   ```
+4. **Add these scripts to your `package.json`:**
+   ```json
+   "scripts": {
+     "predeploy": "npm run build",
+     "deploy": "gh-pages -d dist"
+   }
+   ```
+5. **Deploy:**
+   ```sh
+   npm run deploy
+   ```
+6. **Set GitHub Pages source** to `gh-pages` branch in your repo settings.
+
+#### Or use GitHub Actions (recommended for CI/CD):
+- See [Vite docs: Deploy to GitHub Pages](https://vitejs.dev/guide/static-deploy.html#github-pages) for a ready-to-use workflow.
+
+---
+
+**Made with ❤️ by Khoa Vo**

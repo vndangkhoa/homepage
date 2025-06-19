@@ -181,46 +181,62 @@ const ProfileCardComponent = ({
   );
 
   useEffect(() => {
-    if (!enableTilt || !animationHandlers) return;
-
+    if (!enableTilt) return;
     const card = cardRef.current;
     const wrap = wrapRef.current;
-
     if (!card || !wrap) return;
 
-    const pointerMoveHandler = handlePointerMove;
-    const pointerEnterHandler = handlePointerEnter;
-    const pointerLeaveHandler = handlePointerLeave;
+    let orientationHandler = null;
+    let permissionGranted = false;
 
-    card.addEventListener("pointerenter", pointerEnterHandler);
-    card.addEventListener("pointermove", pointerMoveHandler);
-    card.addEventListener("pointerleave", pointerLeaveHandler);
+    function handleOrientation(event) {
+      // gamma: left-right, beta: front-back
+      const gamma = event.gamma || 0; // [-90,90]
+      const beta = event.beta || 0;   // [-180,180]
+      // Map gamma/beta to percentX/percentY
+      const percentX = 50 + (gamma / 90) * 50;
+      const percentY = 50 + (beta / 180) * 50;
+      animationHandlers.updateCardTransform(
+        (percentX / 100) * card.clientWidth,
+        (percentY / 100) * card.clientHeight,
+        card,
+        wrap
+      );
+    }
 
-    const initialX = wrap.clientWidth - ANIMATION_CONFIG.INITIAL_X_OFFSET;
-    const initialY = ANIMATION_CONFIG.INITIAL_Y_OFFSET;
+    function setupOrientation() {
+      if (window.DeviceOrientationEvent && typeof window.DeviceOrientationEvent.requestPermission === 'function') {
+        window.DeviceOrientationEvent.requestPermission().then((response) => {
+          if (response === 'granted') {
+            permissionGranted = true;
+            window.addEventListener('deviceorientation', handleOrientation, true);
+          }
+        });
+      } else if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handleOrientation, true);
+      }
+    }
 
-    animationHandlers.updateCardTransform(initialX, initialY, card, wrap);
-    animationHandlers.createSmoothAnimation(
-      ANIMATION_CONFIG.INITIAL_DURATION,
-      initialX,
-      initialY,
-      card,
-      wrap
-    );
+    // Only use orientation on mobile
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      setupOrientation();
+      orientationHandler = handleOrientation;
+    } else {
+      // Desktop fallback: pointer events (already implemented)
+      card.addEventListener('pointerenter', handlePointerEnter);
+      card.addEventListener('pointermove', handlePointerMove);
+      card.addEventListener('pointerleave', handlePointerLeave);
+    }
 
     return () => {
-      card.removeEventListener("pointerenter", pointerEnterHandler);
-      card.removeEventListener("pointermove", pointerMoveHandler);
-      card.removeEventListener("pointerleave", pointerLeaveHandler);
-      animationHandlers.cancelAnimation();
+      if (orientationHandler) {
+        window.removeEventListener('deviceorientation', orientationHandler, true);
+      }
+      card.removeEventListener('pointerenter', handlePointerEnter);
+      card.removeEventListener('pointermove', handlePointerMove);
+      card.removeEventListener('pointerleave', handlePointerLeave);
     };
-  }, [
-    enableTilt,
-    animationHandlers,
-    handlePointerMove,
-    handlePointerEnter,
-    handlePointerLeave,
-  ]);
+  }, [enableTilt, animationHandlers, handlePointerMove, handlePointerEnter, handlePointerLeave]);
 
   const cardStyle = useMemo(
     () =>

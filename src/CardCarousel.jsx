@@ -7,10 +7,10 @@ const CardCarousel = () => {
   console.log('CardCarousel component rendering');
   
   const [currentCard, setCurrentCard] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const carouselRef = useRef(null);
   const startXRef = useRef(null);
   const startYRef = useRef(null);
+  const mouseDownRef = useRef(false);
 
   const cards = [
     {
@@ -43,19 +43,11 @@ const CardCarousel = () => {
   console.log('Current card:', currentCard);
 
   const nextCard = () => {
-    if (!isTransitioning) {
-      setIsTransitioning(true);
-      setCurrentCard((prev) => (prev + 1) % cards.length);
-      setTimeout(() => setIsTransitioning(false), 500);
-    }
+    setCurrentCard((prev) => (prev + 1) % cards.length);
   };
 
   const prevCard = () => {
-    if (!isTransitioning) {
-      setIsTransitioning(true);
-      setCurrentCard((prev) => (prev - 1 + cards.length) % cards.length);
-      setTimeout(() => setIsTransitioning(false), 500);
-    }
+    setCurrentCard((prev) => (prev - 1 + cards.length) % cards.length);
   };
 
   const handleTouchStart = (e) => {
@@ -106,26 +98,67 @@ const CardCarousel = () => {
     }
   };
 
+  const handleMouseDown = (e) => {
+    mouseDownRef.current = true;
+    startXRef.current = e.clientX;
+    startYRef.current = e.clientY;
+  };
+
+  const handleMouseMove = (e) => {
+    if (!mouseDownRef.current) return;
+    if (!startXRef.current || !startYRef.current) return;
+    const currentX = e.clientX;
+    const currentY = e.clientY;
+    const diffX = startXRef.current - currentX;
+    const diffY = startYRef.current - currentY;
+    // Prevent vertical scrolling if horizontal drag is detected
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+      e.preventDefault();
+    }
+  };
+
+  const handleMouseUp = (e) => {
+    if (!mouseDownRef.current) return;
+    mouseDownRef.current = false;
+    if (!startXRef.current || !startYRef.current) return;
+    const endX = e.clientX;
+    const endY = e.clientY;
+    const diffX = startXRef.current - endX;
+    const diffY = startYRef.current - endY;
+    // Check if it's a horizontal swipe
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+      if (diffX > 0) {
+        nextCard(); // Drag left
+      } else {
+        prevCard(); // Drag right
+      }
+    }
+    startXRef.current = null;
+    startYRef.current = null;
+  };
+
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   return (
-    <div 
-      className="card-carousel"
-      ref={carouselRef}
+    <div
+      className="carousel-wrapper"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      style={{ touchAction: 'pan-y', userSelect: 'none' }}
     >
-      <div className="carousel-container">
-        {cards.map((card, index) => (
+      <div className="carousel-cards">
+        {cards.map((card, idx) => (
           <div
+            className={`carousel-card${currentCard === idx ? ' active' : ''}`}
             key={card.id}
-            className={`carousel-card ${index === currentCard ? 'active' : ''} ${
-              index === (currentCard + 1) % cards.length ? 'next' : ''
-            } ${index === (currentCard - 1 + cards.length) % cards.length ? 'prev' : ''}`}
           >
             {card.component}
           </div>
@@ -138,10 +171,12 @@ const CardCarousel = () => {
             key={index}
             className={`indicator ${index === currentCard ? 'active' : ''}`}
             onClick={() => {
-              if (!isTransitioning) {
-                setIsTransitioning(true);
-                setCurrentCard(index);
-                setTimeout(() => setIsTransitioning(false), 500);
+              if (index !== currentCard) {
+                if (index > currentCard) {
+                  nextCard();
+                } else {
+                  prevCard();
+                }
               }
             }}
             aria-label={`Go to card ${index + 1}`}

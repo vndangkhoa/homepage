@@ -76,6 +76,9 @@
   background-position: 0 0, 0 0, 50% 50%, 0 0;
   background-image: none;
   overflow: hidden;
+  background: rgba(10, 10, 20, 0.65);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
 }
 
 .pc-card:hover,

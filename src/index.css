@@ -1,17 +1,19 @@
+body, .app {
+  background: #0a0a14;
+  color: #fff;
+  transition: background 0.3s, color 0.3s;
+}
+
+.theme-toggle {
+  display: none;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #2a2a2a;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+  --bg: #0a0a14;
+  --card-bg: #181a1b;
+  --text: #fff;
+  --accent: #00c1ff;
+  --shadow: 0 8px 32px 0 rgba(0, 193, 255, 0.18);
 }
 
 * {
@@ -26,7 +28,62 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background: #2a2a2a;
+  background: #0a0a13;
+  overflow: hidden;
+  position: relative;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 40%, #00ffe7cc 0%, #0a0a13 70%),
+    radial-gradient(ellipse at 80% 60%, #ff00e7bb 0%, #0a0a13 70%),
+    radial-gradient(ellipse at 50% 90%, #00aaff99 0%, #0a0a13 80%);
+  filter: blur(60px) brightness(1.2) hue-rotate(0deg);
+  opacity: 0.7;
+  transition: background 1s;
+  animation: auroraHue 18s linear infinite;
+}
+
+@keyframes auroraHue {
+  0% { filter: blur(60px) brightness(1.2) hue-rotate(0deg); }
+  100% { filter: blur(60px) brightness(1.2) hue-rotate(360deg); }
+}
+
+/* Animated glowing flares */
+.flare {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  filter: blur(32px) brightness(1.5);
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  animation: flareMove 12s linear infinite alternate;
+}
+.flare1 {
+  width: 320px;
+  height: 320px;
+  left: 10vw;
+  top: 60vh;
+  background: radial-gradient(circle, #00ffe7 0%, #0a0a13 80%);
+  animation-delay: 0s;
+}
+.flare2 {
+  width: 220px;
+  height: 220px;
+  right: 8vw;
+  top: 20vh;
+  background: radial-gradient(circle, #ff00e7 0%, #0a0a13 80%);
+  animation-delay: 4s;
+}
+@keyframes flareMove {
+  0% { transform: translateY(0) scale(1); opacity: 0.5; }
+  50% { transform: translateY(-40px) scale(1.1); opacity: 0.7; }
+  100% { transform: translateY(0) scale(1); opacity: 0.5; }
 }
 
 #root {
