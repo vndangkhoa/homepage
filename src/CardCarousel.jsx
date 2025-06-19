@@ -22,7 +22,7 @@ const CardCarousel = () => {
           handle="khoavo"
           status="Online"
           contactText="Contact Me"
-          avatarUrl="/KhoaVo-profile.png"
+          avatarUrl={`${import.meta.env.BASE_URL}KhoaVo-profile.png`}
           iconUrl="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE1IDVMMTkuMDkgMTIuMjZMMjcuNSAxMy43M0wyMS43NSAxOS4zN0wyMy4xOCAyNy43NUwxNSA0LjI1TDE1IDVaIiBmaWxsPSIjZmZmIi8+PC9zdmc+"
           showUserInfo={true}
           enableTilt={true}
@@ -30,6 +30,7 @@ const CardCarousel = () => {
             console.log('Contact clicked - switching to contact card');
             nextCard();
           }}
+          style={{ color: '#fff' }}
         />
       )
     },

@@ -31,7 +31,7 @@
   filter: contrast(2) saturate(2) blur(36px);
   transform: scale(0.8) translate3d(0, 0, 0.1px);
   background-size: 100% 100%;
-  background-image: radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y), hsla(266, 100%, 90%, 0.32) 4%, hsla(266, 50%, 80%, 0.18) 10%, hsla(266, 25%, 70%, 0.12) 50%, hsla(266, 0%, 60%, 0) 100%), radial-gradient(35% 52% at 55% 20%, #00ffaac4 0%, #073aff00 100%), radial-gradient(100% 100% at 50% 50%, #00c1ffff 1%, #073aff00 76%), conic-gradient(from 124deg at 50% 50%, #c137ffff 0%, #07c6ffff 40%, #07c6ffff 60%, #c137ffff 100%);
+  background-image: none;
   opacity: 0;
   z-index: 0;
 }
@@ -44,7 +44,7 @@
 }
 
 .contact-card, .contact-inside {
-  background: rgba(10, 10, 20, 0.65);
+  background: none;
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
 }
@@ -67,7 +67,7 @@
   transform: translate3d(0, 0, 0.1px) rotateX(0deg) rotateY(0deg);
   z-index: 2;
   color: #fff;
-  background: #000;
+  background: none;
 }
 
 .contact-card:hover,
@@ -147,7 +147,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: rgba(255,255,255,0.18);
+  background: none;
   border-radius: 1.1rem;
   padding: 1.1rem 1rem;
   box-shadow: 0 2px 12px 0 rgba(31,38,135,0.08), 0 1.5px 8px 0 rgba(0,0,0,0.08) inset;
@@ -160,13 +160,13 @@
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
   text-decoration: none;
-  color: inherit;
+  color: #fff;
 }
 .bento-tile:hover, .bento-tile:focus {
   transform: translateY(-4px) scale(1.04);
   box-shadow: 0 6px 24px 0 rgba(31,38,135,0.16), 0 2px 12px 0 rgba(0,0,0,0.10) inset;
   border-color: #b3e5fc;
-  background: rgba(255,255,255,0.24);
+  background: none;
   text-decoration: none;
 }
 .bento-emoji {
@@ -207,7 +207,7 @@
   font-size: 1.02rem;
   font-weight: 500;
   letter-spacing: 0.01em;
-  background: rgba(36, 36, 44, 0.95);
+  background: none;
   border-radius: 1.1rem;
   padding: 0.7rem 1rem;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,0.10);
@@ -446,7 +446,7 @@
   box-shadow: 0 4px 16px 0 rgba(0,0,0,0.18);
   transition: transform 1s ease;
   transform: translate3d(0, 0, 0.1px) rotateX(0deg) rotateY(0deg);
-  background: rgba(10, 10, 20, 0.65);
+  background: none;
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
   overflow: hidden;
@@ -488,7 +488,7 @@
   font-weight: 600;
   padding: 0.9rem 1.6rem;
   border-radius: 2rem;
-  background: rgba(0, 193, 255, 0.10);
+  background: none;
   box-shadow: 0 2px 16px 0 rgba(0,255,255,0.08);
   color: #fff;
   text-decoration: none;
@@ -503,7 +503,7 @@
 }
 
 .contactcard-link:hover, .contactcard-link:active {
-  background: rgba(0, 193, 255, 0.22);
+  background: none;
   box-shadow: 0 4px 24px 0 #00c1ff44;
   transform: scale(1.04);
 }
@@ -529,6 +529,21 @@
   .contactcard-mobile-inner {
     max-width: 98vw;
     max-height: 260px;
+  }
+  .contactcard-link {
+    font-size: 1.18rem;
+    padding: 1.1rem 0.8rem;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .contactcard-link-label {
+    font-size: 1.18rem;
+  }
+  .contactcard-link-icon {
+    font-size: 1.7rem;
+  }
+  .contactcard-links-grid {
+    gap: 1.3rem;
   }
 }
 
@@ -646,4 +661,5 @@
   width: 100%;
   max-width: 180px;
   justify-content: center;
+  background: none;
 } 
