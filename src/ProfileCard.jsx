@@ -188,6 +188,7 @@ const ProfileCardComponent = ({
 
     let orientationHandler = null;
     let permissionGranted = false;
+    let touchActive = false;
 
     function handleOrientation(event) {
       // gamma: left-right, beta: front-back
@@ -217,10 +218,57 @@ const ProfileCardComponent = ({
       }
     }
 
-    // Only use orientation on mobile
+    // Touch-drag tilt support
+    function handleTouchStart(e) {
+      if (e.touches.length === 1) {
+        touchActive = true;
+        wrap.classList.add('active');
+        card.classList.add('active');
+        const rect = card.getBoundingClientRect();
+        const touch = e.touches[0];
+        animationHandlers.updateCardTransform(
+          touch.clientX - rect.left,
+          touch.clientY - rect.top,
+          card,
+          wrap
+        );
+      }
+    }
+    function handleTouchMove(e) {
+      if (!touchActive || e.touches.length !== 1) return;
+      const rect = card.getBoundingClientRect();
+      const touch = e.touches[0];
+      animationHandlers.updateCardTransform(
+        touch.clientX - rect.left,
+        touch.clientY - rect.top,
+        card,
+        wrap
+      );
+      e.preventDefault();
+    }
+    function handleTouchEnd(e) {
+      if (!touchActive) return;
+      touchActive = false;
+      wrap.classList.remove('active');
+      card.classList.remove('active');
+      // Animate back to center
+      animationHandlers.createSmoothAnimation(
+        ANIMATION_CONFIG.SMOOTH_DURATION,
+        card.clientWidth / 2,
+        card.clientHeight / 2,
+        card,
+        wrap
+      );
+    }
+
+    // Only use orientation and touch on mobile
     if (/Mobi|Android/i.test(navigator.userAgent)) {
       setupOrientation();
       orientationHandler = handleOrientation;
+      card.addEventListener('touchstart', handleTouchStart, { passive: false });
+      card.addEventListener('touchmove', handleTouchMove, { passive: false });
+      card.addEventListener('touchend', handleTouchEnd, { passive: false });
+      card.addEventListener('touchcancel', handleTouchEnd, { passive: false });
     } else {
       // Desktop fallback: pointer events (already implemented)
       card.addEventListener('pointerenter', handlePointerEnter);
@@ -235,6 +283,10 @@ const ProfileCardComponent = ({
       card.removeEventListener('pointerenter', handlePointerEnter);
       card.removeEventListener('pointermove', handlePointerMove);
       card.removeEventListener('pointerleave', handlePointerLeave);
+      card.removeEventListener('touchstart', handleTouchStart);
+      card.removeEventListener('touchmove', handleTouchMove);
+      card.removeEventListener('touchend', handleTouchEnd);
+      card.removeEventListener('touchcancel', handleTouchEnd);
     };
   }, [enableTilt, animationHandlers, handlePointerMove, handlePointerEnter, handlePointerLeave]);
 

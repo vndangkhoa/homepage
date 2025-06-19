@@ -1,33 +1,12 @@
-import React, { useRef, useCallback, useMemo, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import './ContactCard.css';
-
-const clamp = (value, min = 0, max = 100) => Math.min(Math.max(value, min), max);
-const round = (value, precision = 3) => parseFloat(value.toFixed(precision));
-const adjust = (value, fromMin, fromMax, toMin, toMax) => round(toMin + ((toMax - toMin) * (value - fromMin)) / (fromMax - fromMin));
-const easeInOutCubic = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-
-const ANIMATION_CONFIG = {
-  SMOOTH_DURATION: 600,
-  INITIAL_DURATION: 1500,
-  INITIAL_X_OFFSET: 70,
-  INITIAL_Y_OFFSET: 60,
-};
 
 const bentoLinks = [
   {
-    icon: '🗂️', label: 'Portfolio', url: 'https://portfolio.khoavo.i234.me'
-  },
-  {
-    icon: '💬', label: 'RocketChat', url: 'https://chat.khoavo.i234.me'
-  },
-  {
-    icon: '💬', label: 'Zalo', url: 'https://zalo.me/g/ywjwyv205'
-  },
-  {
-    icon: '🎮', label: 'REDMAGIC', url: 'https://rm8pfix.khoavo.i234.me'
-  },
-  {
     icon: '🌐', label: 'Website', url: 'https://khoavo.i234.me'
+  },
+  {
+    icon: '🎮', label: 'REDMAGIC', url: 'https://url.khoavo.i234.me/rm8pfix'
   },
   {
     icon: '📘', label: 'Facebook', url: 'https://facebook.com/khoavo'
@@ -37,12 +16,19 @@ const bentoLinks = [
   },
 ];
 
+const ANIMATION_CONFIG = {
+  SMOOTH_DURATION: 600,
+};
+const clamp = (value, min = 0, max = 100) => Math.min(Math.max(value, min), max);
+const round = (value, precision = 3) => parseFloat(value.toFixed(precision));
+const adjust = (value, fromMin, fromMax, toMin, toMax) => round(toMin + ((toMax - fromMin) * (value - fromMin)) / (fromMax - fromMin));
+const easeInOutCubic = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+
 const ContactCard = () => {
   const wrapRef = useRef(null);
   const cardRef = useRef(null);
-  const [headerClicks, setHeaderClicks] = useState(0);
-  const [showConfetti, setShowConfetti] = useState(false);
 
+  // 3D tilt animation logic
   const animationHandlers = useMemo(() => {
     let rafId = null;
     const updateCardTransform = (offsetX, offsetY, card, wrap) => {
@@ -133,29 +119,15 @@ const ContactCard = () => {
     card.classList.remove('active');
   }, [animationHandlers]);
 
-  const handleHeaderClick = () => {
-    setHeaderClicks((prev) => {
-      const next = prev + 1;
-      if (next >= 5) {
-        setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 3000);
-        return 0;
-      }
-      return next;
-    });
-  };
-
   useEffect(() => {
     const card = cardRef.current;
     const wrap = wrapRef.current;
     if (!card || !wrap || !animationHandlers) return;
-
     let orientationHandler = null;
-    let permissionGranted = false;
-
+    let touchActive = false;
     function handleOrientation(event) {
-      const gamma = event.gamma || 0; // [-90,90]
-      const beta = event.beta || 0;   // [-180,180]
+      const gamma = event.gamma || 0;
+      const beta = event.beta || 0;
       const percentX = 50 + (gamma / 90) * 50;
       const percentY = 50 + (beta / 180) * 50;
       animationHandlers.updateCardTransform(
@@ -165,12 +137,10 @@ const ContactCard = () => {
         wrap
       );
     }
-
     function setupOrientation() {
       if (window.DeviceOrientationEvent && typeof window.DeviceOrientationEvent.requestPermission === 'function') {
         window.DeviceOrientationEvent.requestPermission().then((response) => {
           if (response === 'granted') {
-            permissionGranted = true;
             window.addEventListener('deviceorientation', handleOrientation, true);
           }
         });
@@ -178,27 +148,58 @@ const ContactCard = () => {
         window.addEventListener('deviceorientation', handleOrientation, true);
       }
     }
-
+    function handleTouchStart(e) {
+      if (e.touches.length === 1) {
+        touchActive = true;
+        wrap.classList.add('active');
+        card.classList.add('active');
+        const rect = card.getBoundingClientRect();
+        const touch = e.touches[0];
+        animationHandlers.updateCardTransform(
+          touch.clientX - rect.left,
+          touch.clientY - rect.top,
+          card,
+          wrap
+        );
+      }
+    }
+    function handleTouchMove(e) {
+      if (!touchActive || e.touches.length !== 1) return;
+      const rect = card.getBoundingClientRect();
+      const touch = e.touches[0];
+      animationHandlers.updateCardTransform(
+        touch.clientX - rect.left,
+        touch.clientY - rect.top,
+        card,
+        wrap
+      );
+      e.preventDefault();
+    }
+    function handleTouchEnd(e) {
+      if (!touchActive) return;
+      touchActive = false;
+      wrap.classList.remove('active');
+      card.classList.remove('active');
+      animationHandlers.createSmoothAnimation(
+        ANIMATION_CONFIG.SMOOTH_DURATION,
+        card.clientWidth / 2,
+        card.clientHeight / 2,
+        card,
+        wrap
+      );
+    }
     if (/Mobi|Android/i.test(navigator.userAgent)) {
       setupOrientation();
       orientationHandler = handleOrientation;
+      card.addEventListener('touchstart', handleTouchStart, { passive: false });
+      card.addEventListener('touchmove', handleTouchMove, { passive: false });
+      card.addEventListener('touchend', handleTouchEnd, { passive: false });
+      card.addEventListener('touchcancel', handleTouchEnd, { passive: false });
     } else {
       card.addEventListener('pointerenter', handlePointerEnter);
       card.addEventListener('pointermove', handlePointerMove);
       card.addEventListener('pointerleave', handlePointerLeave);
     }
-
-    const initialX = wrap.clientWidth - ANIMATION_CONFIG.INITIAL_X_OFFSET;
-    const initialY = ANIMATION_CONFIG.INITIAL_Y_OFFSET;
-    animationHandlers.updateCardTransform(initialX, initialY, card, wrap);
-    animationHandlers.createSmoothAnimation(
-      ANIMATION_CONFIG.INITIAL_DURATION,
-      initialX,
-      initialY,
-      card,
-      wrap
-    );
-
     return () => {
       if (orientationHandler) {
         window.removeEventListener('deviceorientation', orientationHandler, true);
@@ -206,42 +207,31 @@ const ContactCard = () => {
       card.removeEventListener('pointerenter', handlePointerEnter);
       card.removeEventListener('pointermove', handlePointerMove);
       card.removeEventListener('pointerleave', handlePointerLeave);
-      animationHandlers.cancelAnimation();
+      card.removeEventListener('touchstart', handleTouchStart);
+      card.removeEventListener('touchmove', handleTouchMove);
+      card.removeEventListener('touchend', handleTouchEnd);
+      card.removeEventListener('touchcancel', handleTouchEnd);
     };
   }, [animationHandlers, handlePointerMove, handlePointerEnter, handlePointerLeave]);
 
   return (
-    <div ref={wrapRef} className="contact-card-wrapper">
-      <section ref={cardRef} className="contact-card">
-        <div className="contact-inside">
-          <div className="contact-header" onClick={handleHeaderClick} style={{cursor:'pointer'}}>
-            <div className="contact-title-block">
-              <h2>Khoa Vo</h2>
-              <div className="contact-role">Art Lead</div>
-            </div>
-          </div>
-          <div className="contact-bento">
-            {bentoLinks.map((item, idx) => (
-              <a
-                className="bento-tile"
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                key={item.label}
-                title={item.label}
-              >
-                <span className="bento-emoji">{item.icon}</span>
-                <span className="bento-label">{item.label}</span>
-              </a>
-            ))}
-          </div>
-          <div className="contact-footer">
-            <div>Status: Available for freelance</div>
-            <div>Response: Usually within 24h</div>
-          </div>
+    <div ref={wrapRef} className="contactcard-mobile-outer contact-card-wrapper">
+      <div ref={cardRef} className="contactcard-mobile-inner contact-card">
+        <div className="contactcard-links-grid">
+          {bentoLinks.map((item) => (
+            <a
+              className="contactcard-link"
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              key={item.label}
+            >
+              <span className="contactcard-link-icon">{item.icon}</span>
+              <span className="contactcard-link-label">{item.label}</span>
+            </a>
+          ))}
         </div>
-      </section>
-      {showConfetti && <div className="confetti">🎉🎊✨</div>}
+      </div>
     </div>
   );
 };
