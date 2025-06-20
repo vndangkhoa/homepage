@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ProfileCard from './ProfileCard';
 import ContactCard from './ContactCard';
+import ToolsCard from './ToolsCard';
 import './CardCarousel.css';
 
 const CardCarousel = () => {
@@ -37,6 +38,10 @@ const CardCarousel = () => {
     {
       id: 'contact',
       component: <ContactCard />
+    },
+    {
+      id: 'tools',
+      component: <ToolsCard />
     }
   ];
 
