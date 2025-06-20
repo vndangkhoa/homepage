@@ -29,6 +29,18 @@ const easeInOutCubic = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2,
 const ToolsCard = () => {
   const wrapRef = useRef(null);
   const cardRef = useRef(null);
+  const linksGridRef = useRef(null);
+  const [isScrollable, setIsScrollable] = React.useState(false);
+
+  // Detect if the grid is scrollable
+  useEffect(() => {
+    const grid = linksGridRef.current;
+    if (grid && grid.scrollHeight > grid.clientHeight) {
+      setIsScrollable(true);
+    } else {
+      setIsScrollable(false);
+    }
+  }, [toolLinks.length]);
 
   // 3D tilt animation logic
   const animationHandlers = useMemo(() => {
@@ -224,7 +236,10 @@ const ToolsCard = () => {
         tabIndex={0}
         style={{ background: 'none', color: '#fff' }}
       >
-        <div className="contactcard-links-grid">
+        <div
+          className={`contactcard-links-grid${isScrollable ? ' scrollable' : ''}`}
+          ref={linksGridRef}
+        >
           {toolLinks.map((item) => (
             <a
               className="contactcard-link"

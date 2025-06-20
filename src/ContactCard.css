@@ -648,30 +648,33 @@
 }
 
 .contactcard-links-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.4rem;
-  width: 100%;
-  align-items: center;
-  justify-items: center;
-  margin: 0 auto;
   max-height: 320px;
   overflow-y: auto;
   padding-right: 4px;
-  /* Hide scrollbar for Webkit browsers */
-  scrollbar-width: thin;
-  scrollbar-color: #333 #111;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+  position: relative;
 }
 .contactcard-links-grid::-webkit-scrollbar {
-  width: 6px;
+  display: none; /* Hide scrollbar for Webkit browsers */
 }
-.contactcard-links-grid::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 3px;
+.contactcard-links-grid::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 18px;
+  background: linear-gradient(to top, rgba(255,255,255,0.18) 60%, transparent 100%);
+  border-radius: 12px 12px 0 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
 }
-.contactcard-links-grid::-webkit-scrollbar-track {
-  background: #111;
-  border-radius: 3px;
+.contactcard-links-grid.scrollable::after {
+  opacity: 1;
 }
 
 .contactcard-link {
