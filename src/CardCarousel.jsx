@@ -19,7 +19,7 @@ const CardCarousel = () => {
       component: (
         <ProfileCard
           name="Khoa Vo"
-          title="Art Lead"
+          title="Art Lead | Owner of REDMAGIC VN"
           handle="khoavo"
           status="Online"
           contactText="Contact Me"
