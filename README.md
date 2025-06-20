@@ -383,3 +383,18 @@ Open the local address (e.g. http://localhost:5173/) in your browser.
 ---
 
 **Made with ❤️ by Khoa Vo**
+
+## 🆕 Tools Card
+
+A new Tools Card page has been added to the card carousel. This card provides quick access to useful tools and services hosted on your NAS Synology server, each with a clear icon and streamlined label. Long tool names are automatically shortened with ellipsis and show the full name on hover.
+
+**Current tools include:**
+- ▶️ YouTube (No Ads, Download)
+- 🎬 Tiktok & Facebook (No Ads)
+- 📄 PDF Tools
+- 🖼️ JPG Tools
+- 💻 IT Utilities
+- 🎥 Movies (Jellyfin)
+- 🎵 Music Streaming
+
+You can access the Tools Card by swiping or navigating through the carousel, just like the Profile and Contact cards.
