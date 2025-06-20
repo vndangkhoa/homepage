@@ -655,6 +655,23 @@
   align-items: center;
   justify-items: center;
   margin: 0 auto;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+  /* Hide scrollbar for Webkit browsers */
+  scrollbar-width: thin;
+  scrollbar-color: #333 #111;
+}
+.contactcard-links-grid::-webkit-scrollbar {
+  width: 6px;
+}
+.contactcard-links-grid::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+.contactcard-links-grid::-webkit-scrollbar-track {
+  background: #111;
+  border-radius: 3px;
 }
 
 .contactcard-link {
