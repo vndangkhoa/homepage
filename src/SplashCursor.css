@@ -7,47 +7,63 @@
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  background: #000;
-  background-color: #000;
-  box-shadow: 0 0 32px 8px #00c1ff55, 0 0 0 2px #00c1ff33;
-  mix-blend-mode: screen;
-  transition: background 0.2s, box-shadow 0.2s, transform 0.08s cubic-bezier(.4,2,.6,1);
+  background-color: var(--accent-color); /* Use accent color for cursor dot */
+  /* Shadow using accent color with alpha, and a border-like inner shadow */
+  box-shadow: 0 0 24px 6px hsla(var(--accent-hue, 192), var(--accent-sat, 100%), var(--accent-light, 50%), 0.4),
+              0 0 0 2px hsla(var(--accent-hue, 192), var(--accent-sat, 100%), var(--accent-light, 50%), 0.2);
+  mix-blend-mode: screen; /* Screen blend mode often looks good on dark themes */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.08s cubic-bezier(.4,2,.6,1);
   will-change: transform;
+}
+
+[data-theme="light"] .splash-cursor {
+  background-color: var(--accent-color);
+  /* Lighter shadow for light theme, or different blend mode if needed */
+  box-shadow: 0 0 16px 4px hsla(var(--accent-hue, 192), var(--accent-sat, 100%), var(--accent-light, 50%), 0.3),
+              0 0 0 2px hsla(var(--accent-hue, 192), var(--accent-sat, 100%), var(--accent-light, 50%), 0.15);
+  mix-blend-mode: overlay; /* Overlay might be better on light backgrounds */
 }
 
 .splash-ripple {
   position: fixed;
   left: 0;
   top: 0;
-  width: 80px;
-  height: 80px;
+  width: 80px; /* Initial size, scales up */
+  height: 80px; /* Initial size, scales up */
   border-radius: 50%;
   pointer-events: none;
-  z-index: 9998;
-  background: none;
-  opacity: 0;
-  transform: scale(0.5);
-  transition: opacity 0.4s, transform 0.4s;
+  z-index: 9998; /* Below cursor dot */
+  background-color: hsla(var(--accent-hue, 192), var(--accent-sat, 100%), var(--accent-light, 50%), 0.5); /* Ripple with accent color */
+  opacity: 0; /* Starts invisible */
+  transform: scale(0.5); /* Starts small */
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out; /* Smooth transitions for appearance */
 }
 
 .splash-ripple.active {
-  opacity: 0.7;
-  transform: scale(1.8);
-  transition: opacity 0.4s, transform 0.4s;
-  animation: rippleFade 0.7s forwards;
+  opacity: 0.7; /* Target opacity during ripple */
+  transform: scale(1.8); /* Target scale during ripple */
+  /* animation: rippleFade 0.7s forwards; */ /* Animation handles the fade out */
 }
+[data-theme="light"] .splash-ripple {
+   background-color: hsla(var(--accent-hue, 192), var(--accent-sat, 100%), var(--accent-light, 60%), 0.4); /* Slightly adjusted for light */
+}
+
 
 @keyframes rippleFade {
   0% {
-    opacity: 0.7;
-    transform: scale(1.2);
+    opacity: 0.6; /* Start a bit less opaque */
+    transform: scale(1);
   }
   80% {
-    opacity: 0.3;
-    transform: scale(2.2);
+    opacity: 0.2;
+    transform: scale(2);
   }
   100% {
     opacity: 0;
-    transform: scale(2.5);
+    transform: scale(2.2); /* Slightly smaller max scale */
   }
-} 
+}
+/* Apply animation when active */
+.splash-ripple.active {
+  animation: rippleFade 0.7s ease-out forwards;
+}
