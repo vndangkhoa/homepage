@@ -1,40 +1,16 @@
-.card-carousel {
+.card-carousel,
+.carousel-wrapper,
+.carousel-cards {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100vh; /* Use 100% of viewport height */
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  touch-action: pan-y;
-  background: #000;
-  background-color: #000;
-  color: #fff;
-}
-
-.carousel-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-  background: #000;
-  background-color: #000;
-  color: #fff;
-}
-
-.carousel-cards {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  background: #000;
-  background-color: #000;
-  color: #fff;
+  touch-action: pan-y; /* Allow vertical scroll, block horizontal during touch */
+  background-color: transparent; /* Inherit from .app or body */
+  color: var(--text-color);
 }
 
 .carousel-card {
@@ -42,35 +18,25 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  display: none;
+  display: none; /* Hidden by default, active class shows it */
   align-items: center;
   justify-content: center;
-  width: auto;
-  height: auto;
-  filter: none !important;
-  pointer-events: none;
-  transition: none !important;
-  background: none;
-  background: #000;
-  background-color: #000;
-  color: #fff;
+  width: auto; /* Let content define width */
+  height: auto; /* Let content define height */
+  filter: none !important; /* Override any external filters */
+  pointer-events: none; /* Not interactive unless active */
+  transition: none !important; /* No transition on the container itself */
+  background: transparent; /* Card itself will have its own background */
+  color: var(--text-color); /* Text color for any direct text (unlikely) */
 }
 
 .carousel-card.active {
-  display: flex;
-  pointer-events: auto;
-  filter: none !important;
-  transition: none;
-  background: none;
-  background: #000;
-  background-color: #000;
-  color: #fff;
+  display: flex; /* Show active card */
+  pointer-events: auto; /* Make it interactive */
+  /* filter and transition are intentionally left as none/none !important */
 }
 
-.carousel-card.prev,
-.carousel-card.next {
-  transition: none;
-}
+/* .carousel-card.prev, .carousel-card.next are fine as is (transition: none) */
 
 .carousel-indicators {
   position: absolute;
@@ -79,23 +45,20 @@
   transform: translateX(-50%);
   display: flex;
   gap: 16px;
-  z-index: 10;
+  z-index: 10; /* Ensure indicators are above cards */
 }
 
 .indicator {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  background: none;
+  border: 2px solid var(--border-color); /* Themed border */
+  background-color: transparent;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   padding: 0;
   position: relative;
   overflow: hidden;
-  background: #000;
-  background-color: #000;
-  color: #fff;
 }
 
 .indicator::before {
@@ -105,41 +68,36 @@
   left: 50%;
   width: 0;
   height: 0;
-  background: rgba(255, 255, 255, 0.8);
+  background-color: var(--accent-color); /* Use accent color for the fill */
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  background: #000;
-  background-color: #000;
-  color: #fff;
 }
 
 .indicator:hover {
-  border-color: rgba(255, 255, 255, 0.7);
+  border-color: var(--accent-color); /* Accent color on hover */
   transform: scale(1.2);
 }
 
 .indicator:hover::before {
   width: 6px;
   height: 6px;
+  opacity: 0.7;
 }
 
 .indicator.active {
-  border-color: rgba(255, 255, 255, 0.9);
+  border-color: var(--accent-color); /* Active indicator uses accent color */
   transform: scale(1.1);
 }
 
 .indicator.active::before {
   width: 8px;
   height: 8px;
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-  background: #000;
-  background-color: #000;
-  color: #fff;
+  background-color: var(--accent-color); /* Full accent color for active */
+  box-shadow: 0 0 15px var(--accent-color); /* Glow with accent color */
 }
 
-/* Swipe hint animation */
+/* Swipe hint animation - keep as is, it's generic */
 @keyframes swipeHint {
   0%, 100% {
     transform: translateX(0);
@@ -150,10 +108,10 @@
 }
 
 .carousel-card:not(.active) {
-  animation: none;
+  animation: none; /* Ensure no animation on non-active cards */
 }
 
-/* Mobile optimizations */
+/* Mobile optimizations - keep as is, they adjust sizes */
 @media (max-width: 768px) {
   .carousel-indicators {
     bottom: 30px;
@@ -198,12 +156,12 @@
   }
 }
 
-/* Smooth transitions for all interactive elements */
+/* Smooth transitions for all interactive elements within a card - keep as is */
 .carousel-card * {
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Prevent text selection during swipe */
+/* Prevent text selection during swipe - keep as is */
 .card-carousel {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -211,7 +169,7 @@
   user-select: none;
 }
 
-/* Elegant fade in/out for cards */
+/* Elegant fade in/out for cards (will-change) - keep as is */
 .carousel-card {
   will-change: transform, opacity, filter;
 }
@@ -227,34 +185,33 @@
   top: 50%;
   width: 0;
   height: 0;
-  background: rgba(0, 255, 255, 0.3);
+  background-color: var(--accent-color); /* Ripple with accent color */
+  opacity: 0.3; /* Initial opacity for ripple */
   border-radius: 100%;
   transform: translate(-50%, -50%);
   pointer-events: none;
   transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
-  opacity: 0.7;
-  background: #000;
-  background-color: #000;
-  color: #fff;
 }
 .ripple-btn:active:after {
-  width: 120px;
-  height: 120px;
-  opacity: 0;
-  transition: 0s;
+  width: 120px; /* Adjust size as needed */
+  height: 120px; /* Adjust size as needed */
+  opacity: 0; /* Fade out ripple */
+  transition: 0s; /* Instant change on active, then fades out */
 }
 
+/* Touch device active state styling - keep as is, but ensure shadow uses themed variable */
 @media (hover: none) and (pointer: coarse) {
-  .carousel-card:active {
+  .carousel-card:active { /* This might be too broad if cards are complex */
     transform: scale(0.97);
-    box-shadow: 0 2px 16px 0 rgba(0,255,255,0.18);
+    box-shadow: 0 2px 16px 0 var(--shadow-color); /* Themed shadow */
   }
-  .bento-tile:active {
+  .bento-tile:active { /* Assuming .bento-tile exists in ContactCard or ToolsCard */
     transform: scale(0.97);
-    box-shadow: 0 2px 16px 0 rgba(0,255,255,0.18);
+    box-shadow: 0 2px 16px 0 var(--shadow-color); /* Themed shadow */
   }
 }
 
+/* Card flip animations - keep as is (defined as empty) */
 @keyframes cardFlipIn {}
 @keyframes cardFlipOut {}
 
@@ -263,6 +220,7 @@
   animation: none !important;
 }
 
+/* Final transition override - keep as is */
 .carousel-card {
   transition: none !important;
 } 

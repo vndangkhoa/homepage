@@ -1,19 +1,35 @@
-body, .app {
-  background: #000;
-  color: #fff;
-  transition: background 0.3s, color 0.3s;
-}
-
-.theme-toggle {
-  display: none;
-}
-
+/* Default (Dark Theme) Variables */
 :root {
-  --bg: #0a0a14;
-  --card-bg: #181a1b;
-  --text: #fff;
-  --accent: #00c1ff;
-  --shadow: 0 8px 32px 0 rgba(0, 193, 255, 0.18);
+  --bg-color: #000000; /* Deep black for the very background */
+  --base-bg-color: #0a0a14; /* Base for elements, slightly lighter */
+  --card-bg: rgba(24, 26, 27, 0.75); /* Dark card background with some transparency */
+  --text-color: #e0e0e0;
+  --text-color-muted: #a0a0a0;
+  --accent-color: #00c1ff; /* This will be overridden by JS */
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(0, 193, 255, 0.18); /* Shadow related to accent */
+  --glass-bg: rgba(10, 10, 15, 0.3);
+  --glow-color: hsla(192, 100%, 50%, 0.7); /* Default based on original accent */
+  color-scheme: dark;
+}
+
+/* Light Theme Variables */
+[data-theme="light"] {
+  --bg-color: #f0f2f5;
+  --base-bg-color: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --text-color: #1c1e21;
+  --text-color-muted: #555555;
+  /* Accent color is controlled by JS */
+  --border-color: rgba(0, 0, 0, 0.1);
+  --shadow-color: rgba(var(--accent-r, 0), var(--accent-g, 193), var(--accent-b, 255), 0.25); /* Shadow related to accent */
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glow-color: hsla(var(--accent-hue, 192), 70%, 60%, 0.7); /* Adjusted for light theme */
+  color-scheme: light;
+}
+
+.theme-toggle { /* This was in original CSS, might be for a planned toggle */
+  display: none;
 }
 
 * {
@@ -28,46 +44,66 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background: #000;
+  background-color: var(--bg-color); /* Themed background */
   overflow: hidden;
   position: relative;
-  color: #fff;
+  color: var(--text-color); /* Themed text */
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
+
+/* Aurora and Flares - primarily for dark theme, might need adjustment for light */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 0; /* Behind cards but above body background */
   pointer-events: none;
-  background: #000;
-  filter: blur(60px) brightness(1.2) hue-rotate(0deg);
-  opacity: 0.7;
-  transition: background 1s;
+  background: transparent; /* Transparent, relies on filter for color */
+  filter: blur(60px) brightness(1.2) hue-rotate(0deg); /* Original values */
+  opacity: var(--aurora-opacity, 0.7); /* Allow theme-specific opacity */
+  transition: opacity 0.5s ease, filter 0.5s ease;
   animation: auroraHue 18s linear infinite;
 }
+
+[data-theme="light"] body::before {
+  filter: blur(80px) brightness(1.5) hue-rotate(0deg); /* Lighter, more diffuse aurora */
+  opacity: var(--aurora-opacity, 0.4); /* Less prominent in light mode */
+}
+
 
 @keyframes auroraHue {
   0% { filter: blur(60px) brightness(1.2) hue-rotate(0deg); }
   100% { filter: blur(60px) brightness(1.2) hue-rotate(360deg); }
 }
 
-/* Animated glowing flares */
+[data-theme="light"] @keyframes auroraHue {
+  0% { filter: blur(80px) brightness(1.5) hue-rotate(0deg); }
+  100% { filter: blur(80px) brightness(1.5) hue-rotate(360deg); }
+}
+
 .flare {
   position: fixed;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 1;
+  z-index: -1; /* Ensure flares are behind content */
   filter: blur(32px) brightness(1.5);
   opacity: 0.5;
-  mix-blend-mode: screen;
+  mix-blend-mode: screen; /* Screen works well on dark, might need change for light */
   animation: flareMove 12s linear infinite alternate;
+  background: var(--accent-color); /* Flares take accent color */
 }
+
+[data-theme="light"] .flare {
+  mix-blend-mode: overlay; /* Overlay or soft-light might be better for light theme */
+  opacity: 0.3;
+  filter: blur(40px) brightness(1.2);
+}
+
 .flare1 {
   width: 320px;
   height: 320px;
   left: 10vw;
   top: 60vh;
-  background: #000;
   animation-delay: 0s;
 }
 .flare2 {
@@ -75,14 +111,20 @@ body::before {
   height: 220px;
   right: 8vw;
   top: 20vh;
-  background: #000;
   animation-delay: 4s;
 }
 @keyframes flareMove {
-  0% { transform: translateY(0) scale(1); opacity: 0.5; }
-  50% { transform: translateY(-40px) scale(1.1); opacity: 0.7; }
-  100% { transform: translateY(0) scale(1); opacity: 0.5; }
+  0% { transform: translateY(0) scale(1); opacity: var(--flare-opacity-start, 0.5); }
+  50% { transform: translateY(-40px) scale(1.1); opacity: var(--flare-opacity-mid, 0.7); }
+  100% { transform: translateY(0) scale(1); opacity: var(--flare-opacity-end, 0.5); }
 }
+
+[data-theme="light"] .flare1, [data-theme="light"] .flare2 {
+  --flare-opacity-start: 0.3;
+  --flare-opacity-mid: 0.45;
+  --flare-opacity-end: 0.3;
+}
+
 
 #root {
   width: 100%;
@@ -90,42 +132,48 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1; /* Ensure root content is above ::before pseudo-element */
 }
 
-h1 {
-  font-size: 3.2em;
+h1, h2, h3, h4, h5, h6 {
+  font-size: 3.2em; /* This was specific to h1, generalize or specify */
   line-height: 1.1;
+  color: var(--text-color);
+  transition: color 0.3s ease;
 }
 
-button {
+
+a {
+  font-weight: 500;
+  color: var(--accent-color);
+  text-decoration: inherit;
+  transition: color 0.3s ease, filter 0.2s ease;
+}
+a:hover {
+  filter: brightness(1.2);
+}
+
+
+button { /* General button styling, specific components might override */
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: none;
+  background-color: var(--accent-color); /* Button uses accent color */
+  color: var(--bg-color); /* Text on button contrasts with accent */
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, background-color 0.3s ease, color 0.3s ease, filter 0.2s ease;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--accent-color);
+  filter: brightness(1.15);
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 4px auto -webkit-focus-ring-color; /* Consider theming focus ring if needed */
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #fff;
-    background-color: #000;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #000;
-    color: #fff;
-  }
-}
+/* Remove the prefers-color-scheme block as we are using JS for theme switching */
+/* @media (prefers-color-scheme: light) { ... } */
